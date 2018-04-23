@@ -1,7 +1,7 @@
 import pandas as pd
 import math
 
-data = pd.read_csv('sample.csv')
+data = pd.read_csv('play_golf.csv')
 x = data.iloc[:, :-1]
 y = data.iloc[:, -1]
 attributes = x.columns.tolist()
@@ -45,12 +45,13 @@ class TreeNode(object):
             catagory_num = list(attri_dict.values())  # 用来存放每个key对应的样本数目
             catagory_pos = list()  # 用来存放每个key对应的正样本数目
             for key in attri_dict.keys():
-                catagory_pos.append((self.y[self.data[attribute] == key]).sum())
+                # temp = (self.y[self.data[attribute] == key]).value_counts().tolist()[0]
+                catagory_pos.append(self.y[self.data[attribute] == key].value_counts().tolist()[0])
             entropy.append(self.entropy - Cal_Igr(catagory_pos, catagory_num))
         info_gain = (dict(zip(self.attributes, entropy)))
         # print(entropy)
-        if info_gain[max(info_gain)] > 0.1:  # 如果满足分裂的条件
-            self.attr = max(info_gain)
+        if max(info_gain.values()) > 0.1:  # 如果满足分裂的条件
+            self.attr = max(info_gain, key=info_gain.get)
             self.attributes.remove(self.attr)  # 移除使用过的属性
             for key in self.data[self.attr].value_counts().to_dict().keys():
                 data_ = self.data[self.data[self.attr] == key].reset_index(drop=True)
